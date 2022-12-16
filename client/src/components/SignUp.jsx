@@ -2,37 +2,46 @@ import { Link } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { TextInput, Group, Button, PasswordInput } from "@mantine/core";
 import { useState } from "react";
+import axios from "axios";
+import { registerRoute } from "../utils/apiRoute";
 const SignUp = () => {
   const [data, setData] = useState("");
 
   const form = useForm({
     initialValues: {
-      Username: "",
+      username: "",
       email: "",
       password: "",
       confopassword: "",
     },
     validate: {
-      Username: (value) => (value.length > 0 ? null : "Enter Username"),
+      username: (value) => (value.length > 0 ? null : "Enter username"),
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
       confopassword: (value) =>
         value !== form.values.password ? "Password Do Not Match" : null,
     },
   });
 
-  const submitHandler = () => {
+  const submitHandler =  async () => {
     setData(form.values);
-    console.log(data);
+    // console.log(typeof(form.values))
+    // console.log(typeof(data))
+    const { email, username, password } = form.values;
+       await axios.post(registerRoute,{
+        username,
+        email,
+        password
+    })
   };
   return (
     <div className="rounded-xl w-[450px] border border-black p-2 bg-[#101a3f]">
       <form onSubmit={form.onSubmit(submitHandler)}>
         <div className="flex flex-col gap-10 m-11">
           <TextInput
-            placeholder="Username"
+            placeholder="username"
             withAsterisk
             className="w-60"
-            {...form.getInputProps("Username")}
+            {...form.getInputProps("username")}
           />
           <TextInput
             placeholder="Email"

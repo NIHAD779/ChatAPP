@@ -1,9 +1,9 @@
-import NewUser from "../components/NewUser";
+import UserLogin from "../components/UserLogin";
 
 const Login = () => {
   return (
     <>
-      <NewUser />
+      <UserLogin/>
     </>
   );
 };
