@@ -1,12 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { TextInput, Group, Button, PasswordInput } from "@mantine/core";
-import { useState } from "react";
 import { loginRoute } from "../utils/apiRoute";
 import axios from "axios";
 const UserLogin = () => {
-    const [data, setData] = useState("");
-  
+    const navigate = useNavigate();
+
+
+    
     const form = useForm({
       initialValues: {
         username: "",
@@ -20,17 +21,24 @@ const UserLogin = () => {
     const submitHandler = async () => {
       const {username,password} = form.values;
 
-      const log = await axios.post("http://localhost:8080/api/login",{
+      const log = await axios.post(loginRoute,{
         username,
         password
       },
-      {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      }
+      // {
+      //   headers: { "Content-Type": "application/json",},
+        
+      // }
 
       );
-      console.log(log)
+      if (log.data.status === true){
+        console.log(log.data.message)
+        // console.log(log.data.user)
+        localStorage.setItem("user",JSON.stringify(log.data.user));
+        navigate("/chat")
+      }else{
+        console.log(log.data.message)
+      }
     };
     return (
       <div className="rounded-2xl w-[450px] border border-black p-2 bg-[#101a3f]">

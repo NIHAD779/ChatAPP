@@ -23,7 +23,7 @@ async function login (req, res) {
 
 
 
-async function register(req, res){
+async function register(req, res,next){
     if(!req.body) return res.status(400).json("Post HTTP not provided");
     console.log("user creation initiated")
     const {username,email,password} = req.body;
@@ -48,7 +48,22 @@ async function register(req, res){
     });
 }
 
+async function getAllUsers(req,res){
+    try{
+        const users = await Users.find().select([
+            "email",
+            "username",
+            "avatarImg",
+            "_id",
+        ]);
+        return res.json(users)
+}catch(ex){
+    console.log(ex);
+}
+}
+
 module.exports ={
     register,
-    login
+    login,
+    getAllUsers
 }

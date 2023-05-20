@@ -1,13 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { TextInput, Group, Button, PasswordInput } from "@mantine/core";
-import { useState } from "react";
+// import { useState } from "react";
 import axios from "axios";
 import { registerRoute } from "../utils/apiRoute";
 const SignUp = () => {
-  const [data, setData] = useState("");
-
-  const form = useForm({
+  const navigate = useNavigate();
+    const form = useForm({
     initialValues: {
       username: "",
       email: "",
@@ -23,7 +22,7 @@ const SignUp = () => {
   });
 
   const submitHandler =  async () => {
-    setData(form.values);
+    
     // console.log(typeof(form.values))
     // console.log(typeof(data))
     const { email, username, password } = form.values;
@@ -32,6 +31,7 @@ const SignUp = () => {
         email,
         password
     })
+    navigate("/chat")
   };
   return (
     <div className="rounded-xl w-[450px] border border-black p-2 bg-[#101a3f]">
