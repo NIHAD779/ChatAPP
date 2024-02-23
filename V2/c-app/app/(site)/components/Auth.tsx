@@ -1,27 +1,28 @@
 "use client";
 
-import Input from "@/app/components/inputs/Input";
-import { signIn ,useSession} from "next-auth/react";
-import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import Button from "@/app/components/Button";
-import AuthSocialButton from "./AuthSocialButton";
-import { BsGithub, BsGoogle } from "react-icons/bs";
 import axios from "axios";
-import toast from "react-hot-toast";
-import { useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
+import { BsGithub, BsGoogle } from "react-icons/bs";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+
+import Input from "@/app/components/inputs/Input";
+import AuthSocialButton from "./AuthSocialButton";
+import Button from "@/app/components/Button";
+import { toast } from "react-hot-toast";
+
 type Variant = "LOGIN" | "REGISTER";
+
 const AuthForm = () => {
   const session = useSession();
+  const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (session?.status === "authenticated") {
-      console.log('authenticated')
-      router.push("/users");
+      router.push("/conversations");
     }
   }, [session?.status, router]);
 
@@ -44,26 +45,32 @@ const AuthForm = () => {
       password: "",
     },
   });
+
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
     if (variant === "REGISTER") {
       axios
         .post("/api/register", data)
-        .then(()=> signIn("credentials", data)
+        .then(() =>
+          signIn("credentials", {
+            ...data,
+            redirect: false,
+          })
+        )
         .then((callback) => {
           if (callback?.error) {
-             toast.error("Invalid credentials!");
-           }
-           if (callback?.ok) {
-            toast.success('Logged')
-            router.push("/users");
+            toast.error("Invalid credentials!");
+          }
+
+          if (callback?.ok) {
+            router.push("/conversations");
           }
         })
-        )
-        .catch((err) => console.log('error',err))
-        .finally(() => setIsLoading(false))
+        .catch(() => toast.error("Something went wrong!"))
+        .finally(() => setIsLoading(false));
     }
+
     if (variant === "LOGIN") {
       signIn("credentials", {
         ...data,
@@ -75,8 +82,7 @@ const AuthForm = () => {
           }
 
           if (callback?.ok) {
-            toast.success('Logged')
-            router.push("/users");
+            router.push("/conversations");
           }
         })
         .finally(() => setIsLoading(false));
@@ -85,18 +91,20 @@ const AuthForm = () => {
 
   const socialAction = (action: string) => {
     setIsLoading(true);
-    signIn(action,{redirect: false})
-    .then((callback) => {
-      if (callback?.error){
-        toast.error("Invalid credentials!");
-      } 
-      if (callback?.ok && !callback.error){
-        toast.success('Logged in!')
-      } 
-    })
-    .finally(() => setIsLoading(false))
 
+    signIn(action, { redirect: false })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error("Invalid credentials!");
+        }
+
+        if (callback?.ok) {
+          router.push("/conversations");
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
+
   return (
     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
       <div

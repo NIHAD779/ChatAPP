@@ -14,13 +14,13 @@ const Chat = () => {
 
 
   useEffect ( () => {
-    if (!local) {
-      navigate("/login");
-    } else {
-      setCurrentUser(
-        JSON.parse(local)
-      );
-    }
+    // if (!local) {
+    //   navigate("/login");
+    // } else {
+    //   setCurrentUser(
+    //     JSON.parse(local)
+    //   );
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
   // console.log(currentUser)  

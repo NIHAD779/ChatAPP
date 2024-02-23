@@ -17,5 +17,6 @@ export async function POST(request: Request) {
     },
   });
 
+  console.log('created user')
   return NextResponse.json(user);
 }
